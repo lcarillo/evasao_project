@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho com informações sobre a fonte de dados -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Dashboard de Evasão Escolar</h1>
+        <p class="text-gray-600 mt-2">Bem-vindo, {{ usuario.username }}! Aqui você pode visualizar as previsões de evasão escolar para os municípios de SP.</p>
+        <div class="mt-4 bg-blue-50 p-4 rounded-lg">
+            <p class="text-sm text-blue-700">
+                <strong>Fonte dos dados:</strong> INEP (Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira)
+                <br>
+                <strong>Período dos dados históricos:</strong> Até 2024
+                <br>
+                <strong>Período de previsão:</strong> 2025-2026 utilizando o algoritmo Prophet
+            </p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Filtros</h2>
+        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label for="municipio" class="block text-sm font-medium text-gray-700">Município</label>
+                <input type="text" name="municipio" id="municipio" value="{{ municipio_filter }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div>
+                <label for="ano" class="block text-sm font-medium text-gray-700">Ano</label>
+                <input type="number" name="ano" id="ano" value="{{ ano_filter }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-blue-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Filtrar</button>
+                <a href="?" class="ml-2 w-full bg-gray-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Limpar</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-200">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-lg font-semibold text-gray-900">{{ total_municipios }}</h2>
+                    <p class="text-sm text-gray-500">Municípios Analisados</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-200">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-lg font-semibold text-gray-900">2025-2026</h2>
+                    <p class="text-sm text-gray-500">Período de Previsão</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-200">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Prophet</h2>
+                    <p class="text-sm text-gray-500">Algoritmo de Previsão</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Abas para navegação -->
+    <div class="mb-6 border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8">
+            <a href="#metricas" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Métricas
+            </a>
+            <a href="#previsoes" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Previsões
+            </a>
+            <a href="#historicos" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Dados Históricos
+            </a>
+        </nav>
+    </div>
+
+    <!-- Métricas -->
+    <div id="metricas" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Métricas do Modelo</h2>
+        
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-800 mb-2">Sobre as Métricas</h3>
+            <p class="text-gray-600 text-sm">
+                <strong>Período de validação:</strong> {{ periodo_validacao }} - Dados utilizados para validar a precisão do modelo.
+                As métricas foram calculadas comparando as previsões do modelo com os dados reais de {{ periodo_validacao }}.
+            </p>
+        </div>
+        
+        {% if metricas %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=municipio&order={% if sort_by == 'municipio' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#metricas">
+                                Município
+                                {% if sort_by == 'municipio' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=mae&order={% if sort_by == 'mae' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#metricas">
+                                MAE
+                                {% if sort_by == 'mae' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=rmse&order={% if sort_by == 'rmse' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#metricas">
+                                RMSE
+                                {% if sort_by == 'rmse' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for metrica in metricas %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ metrica.municipio }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ metrica.mae|floatformat:3 }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ metrica.rmse|floatformat:3 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-6 bg-blue-50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-800 mb-2">ℹ️ Observação sobre as métricas</h3>
+            <p class="text-gray-600 text-sm mb-2">
+                As métricas abaixo ajudam a entender a qualidade das previsões do modelo para a taxa de abandono escolar (%):
+            </p>
+            <ul class="list-disc list-inside text-gray-600 text-sm space-y-2">
+                <li><strong>MAE (Erro Absoluto Médio):</strong> mostra o erro médio em pontos percentuais entre os valores reais e previstos. Quanto menor, melhor. Um MAE abaixo de 1 indica que o modelo, em média, erra menos de 1 ponto percentual.</li>
+                <li><strong>RMSE (Raiz do Erro Quadrático Médio):</strong> semelhante ao MAE, mas dá mais peso a erros grandes. Também é medido em pontos percentuais. Valores baixos significam que o modelo raramente comete grandes desvios. Na prática: um RMSE de 1.5 indica que a maioria das previsões está dentro de 1.5 pontos percentuais do valor real.</li>
+            </ul>
+        </div>
+        {% else %}
+        <p class="text-gray-600">Nenhuma métrica disponível no momento.</p>
+        {% endif %}
+    </div>
+
+    <!-- Previsões -->
+    <div id="previsoes" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Previsões para 2025 e 2026</h2>
+        
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-800 mb-2">Sobre as Previsões</h3>
+            <p class="text-gray-600 text-sm">
+                As previsões foram geradas usando o algoritmo Prophet do Facebook. 
+                <strong>Limite Inferior e Superior</strong> representam o intervalo de confiança de 80% da previsão, 
+                ou seja, há 80% de probabilidade de que o valor real esteja dentro deste intervalo.
+            </p>
+        </div>
+        
+        {% if previsoes %}
+        <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=municipio&order={% if sort_by == 'municipio' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#previsoes">
+                                Município
+                                {% if sort_by == 'municipio' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=ano&order={% if sort_by == 'ano' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#previsoes">
+                                Ano
+                                {% if sort_by == 'ano' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=previsao&order={% if sort_by == 'previsao' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#previsoes">
+                                Previsão (%)
+                                {% if sort_by == 'previsao' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Limite Inferior</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Limite Superior</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for previsao in previsoes %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ previsao.municipio }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ previsao.ano }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ previsao.previsao|floatformat:2 }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ previsao.limite_inferior|floatformat:2 }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ previsao.limite_superior|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginação para previsões -->
+        {% if previsoes.paginator %}
+        <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+                Mostrando <span class="font-medium">{{ previsoes.start_index }}</span> a <span class="font-medium">{{ previsoes.end_index }}</span> de <span class="font-medium">{{ previsoes.paginator.count }}</span> resultados
+            </div>
+            <div class="flex space-x-2">
+                {% if previsoes.has_previous %}
+                    <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&order={{ sort_order }}&{% endif %}page={{ previsoes.previous_page_number }}#previsoes" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Anterior</a>
+                {% endif %}
+                
+                {% if previsoes.has_next %}
+                    <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&order={{ sort_order }}&{% endif %}page={{ previsoes.next_page_number }}#previsoes" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Próxima</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% else %}
+        <p class="text-gray-600">Nenhuma previsão disponível no momento.</p>
+        {% endif %}
+    </div>
+
+    <!-- Dados Históricos -->
+    <div id="historicos" class="bg-white rounded-xl shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Dados Históricos</h2>
+        
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-800 mb-2">Sobre os Dados</h3>
+            <p class="text-gray-600 text-sm">
+                Dados históricos de evasão escolar obtidos do INEP. Os valores representam percentuais de evasão por ano.
+                Os dados de 2024 foram utilizados para validação do modelo.
+            </p>
+        </div>
+        
+        {% if dados_brutos %}
+        <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=municipio&order={% if sort_by == 'municipio' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#historicos">
+                                Município
+                                {% if sort_by == 'municipio' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=ano&order={% if sort_by == 'ano' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#historicos">
+                                Ano
+                                {% if sort_by == 'ano' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}sort=total&order={% if sort_by == 'total' and sort_order == 'asc' %}desc{% else %}asc{% endif %}#historicos">
+                                Evasão (%)
+                                {% if sort_by == 'total' %}
+                                    {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for dado in dados_brutos %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ dado.municipio }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ dado.ano }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ dado.total|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginação para dados históricos -->
+        {% if dados_brutos.paginator %}
+        <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+                Mostrando <span class="font-medium">{{ dados_brutos.start_index }}</span> a <span class="font-medium">{{ dados_brutos.end_index }}</span> de <span class="font-medium">{{ dados_brutos.paginator.count }}</span> resultados
+            </div>
+            <div class="flex space-x-2">
+                {% if dados_brutos.has_previous %}
+                    <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&order={{ sort_order }}&{% endif %}page={{ dados_brutos.previous_page_number }}#historicos" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Anterior</a>
+                {% endif %}
+                
+                {% if dados_brutos.has_next %}
+                    <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&order={{ sort_order }}&{% endif %}page={{ dados_brutos.next_page_number }}#historicos" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Próxima</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% else %}
+        <p class="text-gray-600">Nenhum dado histórico disponível no momento.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Smooth scrolling para as âncoras
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Atualizar URL
+                history.pushState(null, null, targetId);
+            }
+        });
+    });
+</script>
+{% endblock %}

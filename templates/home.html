@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+                Previsão de Evasão Escolar em 
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">São Paulo</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
+                Sistema inteligente de análise e previsão de taxas de evasão escolar nos municípios paulistas usando machine learning.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200">
+                        Acessar Dashboard
+                    </a>
+                {% else %}
+                    <a href="{% url 'signup' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200">
+                        Começar Agora
+                    </a>
+                    <a href="{% url 'login' %}" class="border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200">
+                        Fazer Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Como Funciona -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-16">Como Funciona</h2>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Passo 1 -->
+            <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white mb-4">
+                    <span class="text-xl font-bold">1</span>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Coleta de Dados</h3>
+                <p class="text-gray-600">
+                    Coletamos dados históricos de evasão escolar de todos os municípios de São Paulo entre 2018 e 2024.
+                </p>
+            </div>
+            
+            <!-- Passo 2 -->
+            <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white mb-4">
+                    <span class="text-xl font-bold">2</span>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Análise com Prophet</h3>
+                <p class="text-gray-600">
+                    Utilizamos o algoritmo Prophet do Facebook para analisar tendências e sazonalidades nos dados.
+                </p>
+            </div>
+            
+            <!-- Passo 3 -->
+            <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white mb-4">
+                    <span class="text-xl font-bold">3</span>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Previsões Precisas</h3>
+                <p class="text-gray-600">
+                    Geramos previsões para 2025 e 2026 com métricas de avaliação de qualidade (MAE, RMSE, MAPE).
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Informações Institucionais -->
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Trabalho de Conclusão de Curso</h2>
+            <p class="text-xl text-gray-600 mb-10">Desenvolvido como parte dos requisitos para obtenção do grau de Bacharel em Ciência de Dados</p>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Universidade</h3>
+                    <p class="text-gray-600">Univesp</p>
+                    <p class="text-gray-600">Curso de Ciência de Dados</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Autores</h3>
+                    <p class="text-gray-600">Alexandre Mota da Silva, Denis Mário Vasconcellos, Diego Caboclo Ramos, Jose Paulo Diogo Junior, Lucas Carillo, Pedro Vicente Moda, Ricardo Gonçalves dos Santos</p>
+                    <p class="text-gray-600">Orientador: Fernanda Pereira Guidotti.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Final -->
+<section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold text-white mb-6">Pronto para explorar as previsões?</h2>
+        <p class="text-xl text-blue-100 mb-10 max-w-3xl mx-auto">
+            Acesse nosso dashboard interativo e descubra as tendências de evasão escolar em São Paulo.
+        </p>
+        
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="bg-white text-blue-600 hover:bg-blue-50 font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200">
+                Acessar Dashboard
+            </a>
+        {% else %}
+            <a href="{% url 'signup' %}" class="bg-white text-blue-600 hover:bg-blue-50 font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-200">
+                Criar Conta Gratuita
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: evasao-project
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn evasao_project.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: "3.11.9"
