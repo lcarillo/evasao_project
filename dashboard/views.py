@@ -41,46 +41,12 @@ def custom_login(request):
 @login_required
 def dashboard(request: HttpRequest):
     # Número de itens por página
-    ITEMS_PER_PAGE = 10000
+    ITEMS_PER_PAGE = 20
 
-    # Obter parâmetros de filtro
-    municipio_filter = request.GET.get('municipio', '')
-    ano_filter = request.GET.get('ano', '')
-    sort_by = request.GET.get('sort', '')
-    sort_order = request.GET.get('order', 'asc')
-
-    # Buscar dados reais do banco
-    dados_brutos_query = DadosEvasao.objects.select_related('municipio').order_by('-ano')
-    previsoes_query = PrevisaoEvasao.objects.select_related('municipio').all()
-    metricas_query = MetricasModelo.objects.select_related('municipio').all()
-
-    # Aplicar filtros
-    if municipio_filter:
-        dados_brutos_query = dados_brutos_query.filter(municipio__nome__icontains=municipio_filter)
-        previsoes_query = previsoes_query.filter(municipio__nome__icontains=municipio_filter)
-        metricas_query = metricas_query.filter(municipio__nome__icontains=municipio_filter)
-
-    if ano_filter:
-        try:
-            ano = int(ano_filter)
-            dados_brutos_query = dados_brutos_query.filter(ano=ano)
-            previsoes_query = previsoes_query.filter(ano=ano)
-        except ValueError:
-            pass
-
-    # Aplicar ordenação
-    if sort_by:
-        if sort_order == 'desc':
-            sort_by = f'-{sort_by}'
-
-        if sort_by in ['municipio', '-municipio', 'ano', '-ano', 'total', '-total']:
-            dados_brutos_query = dados_brutos_query.order_by(sort_by)
-
-        if sort_by in ['municipio', '-municipio', 'ano', '-ano', 'previsao', '-previsao']:
-            previsoes_query = previsoes_query.order_by(sort_by)
-
-        if sort_by in ['municipio', '-municipio', 'mae', '-mae', 'rmse', '-rmse']:
-            metricas_query = metricas_query.order_by(sort_by)
+    # Buscar dados reais do banco - ADICIONAR ORDER_BY!
+    dados_brutos_query = DadosEvasao.objects.select_related('municipio').order_by('-ano', 'municipio__nome')
+    previsoes_query = PrevisaoEvasao.objects.select_related('municipio').order_by('municipio__nome', 'ano')
+    metricas = MetricasModelo.objects.select_related('municipio').order_by('municipio__nome')
 
     # Paginação
     page_number = request.GET.get('page', 1)
@@ -106,16 +72,13 @@ def dashboard(request: HttpRequest):
         'metricas': [{
             'municipio': m.municipio.nome,
             'mae': m.mae,
-            'rmse': m.rmse
-        } for m in metricas_query],
+            'rmse': m.rmse,
+            'mape': m.mape
+        } for m in metricas],
         'total_municipios': Municipio.objects.count(),
         'usuario': request.user,
         'periodo_treino': '2018-2023',
-        'periodo_validacao': '2024',
-        'municipio_filter': municipio_filter,
-        'ano_filter': ano_filter,
-        'sort_by': sort_by,
-        'sort_order': sort_order
+        'periodo_validacao': '2024'
     }
 
     return render(request, 'dashboard.html', context)

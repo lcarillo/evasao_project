@@ -45,10 +45,21 @@
                 <div class="flex items-center space-x-4">
                     {% if user.is_authenticated %}
                         <span class="text-gray-700">Olá, {{ user.username }}</span>
-                        <a href="{% url 'logout' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200">Sair</a>
+                        
+                        <!-- FORM CORRETO PARA LOGOUT (POST) -->
+                        <form method="post" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200">
+                                Sair
+                            </button>
+                        </form>
                     {% else %}
-                        <a href="{% url 'login' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition duration-200">Entrar</a>
-                        <a href="{% url 'signup' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200">Cadastrar</a>
+                        <a href="{% url 'login' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition duration-200">
+                            Entrar
+                        </a>
+                        <a href="{% url 'signup' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200">
+                            Cadastrar
+                        </a>
                     {% endif %}
                 </div>
             </div>
@@ -70,5 +81,29 @@
             </div>
         </div>
     </footer>
+
+    <!-- Script para smooth scrolling -->
+    <script>
+        // Smooth scrolling para as âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Atualizar URL
+                    history.pushState(null, null, targetId);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
