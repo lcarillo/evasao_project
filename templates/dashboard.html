@@ -20,31 +20,7 @@
             </div>
         </div>
 
-        <!-- Filtros Simplificados -->
-        <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
-            <form method="get" class="flex flex-col md:flex-row gap-3">
-                <div class="flex-1">
-                    <label for="municipio" class="block text-sm font-medium text-gray-700 mb-1">Município</label>
-                    <input type="text" name="municipio" id="municipio" value="{{ municipio_filter }}" 
-                           class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                           placeholder="Buscar município">
-                </div>
-                <div class="flex-1">
-                    <label for="ano" class="block text-sm font-medium text-gray-700 mb-1">Ano</label>
-                    <input type="number" name="ano" id="ano" value="{{ ano_filter }}" 
-                           class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                           placeholder="Filtrar por ano">
-                </div>
-                <div class="flex items-end gap-2 mt-2">
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        Filtrar
-                    </button>
-                    <a href="?" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                        Limpar
-                    </a>
-                </div>
-            </form>
-        </div>
+
 
         <!-- Cards de Resumo -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -127,7 +103,7 @@
                             <h3 class="text-sm font-medium text-blue-800 mb-2">Sobre as Previsões</h3>
                             <p class="text-xs text-blue-600">
                                 Previsões geradas usando o algoritmo Prophet. 
-                                <strong>Limite Inferior e Superior</strong> representam o intervalo de confiança de 80%.
+                                <strong>Limite Inferior e Superior</strong> representan o intervalo de confiança de 80%.
                             </p>
                         </div>
                         
@@ -144,27 +120,27 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="municipio" data-order="{% if sort_by == 'municipio' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="municipio" data-order="{% if request.GET.sort == 'municipio' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>Município</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'municipio' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'municipio' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'municipio' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'municipio' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="ano" data-order="{% if sort_by == 'ano' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="ano" data-order="{% if request.GET.sort == 'ano' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>Ano</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'ano' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'ano' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'ano' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'ano' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="previsao" data-order="{% if sort_by == 'previsao' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="previsao" data-order="{% if request.GET.sort == 'previsao' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>Previsão (%)</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'previsao' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'previsao' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'previsao' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'previsao' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
@@ -192,21 +168,32 @@
                     </div>
                     
                     <!-- Paginação para previsões -->
-                    {% if previsoes.paginator %}
+                    {% if previsoes.has_other_pages %}
                     <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
                         <div class="text-sm text-gray-700">
                             Mostrando <span class="font-medium">{{ previsoes.start_index }}</span> a <span class="font-medium">{{ previsoes.end_index }}</span> de <span class="font-medium">{{ previsoes.paginator.count }}</span> resultados
                         </div>
                         <div class="flex gap-1">
                             {% if previsoes.has_previous %}
-                                <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&order={{ sort_order }}&{% endif %}page={{ previsoes.previous_page_number }}"
+                                <a href="?{% if request.GET.municipio %}municipio={{ request.GET.municipio }}&{% endif %}{% if request.GET.ano %}ano={{ request.GET.ano }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&order={{ request.GET.order }}&{% endif %}page={{ previsoes.previous_page_number }}#previsoes"
                                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
                                     Anterior
                                 </a>
                             {% endif %}
                             
+                            {% for i in previsoes.paginator.page_range %}
+                                {% if previsoes.number == i %}
+                                    <span class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm">{{ i }}</span>
+                                {% else %}
+                                    <a href="?{% if request.GET.municipio %}municipio={{ request.GET.municipio }}&{% endif %}{% if request.GET.ano %}ano={{ request.GET.ano }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&order={{ request.GET.order }}&{% endif %}page={{ i }}#previsoes"
+                                       class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                                        {{ i }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                            
                             {% if previsoes.has_next %}
-                                <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&order={{ sort_order }}&{% endif %}page={{ previsoes.next_page_number }}"
+                                <a href="?{% if request.GET.municipio %}municipio={{ request.GET.municipio }}&{% endif %}{% if request.GET.ano %}ano={{ request.GET.ano }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&order={{ request.GET.order }}&{% endif %}page={{ previsoes.next_page_number }}#previsoes"
                                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
                                     Próxima
                                 </a>
@@ -223,39 +210,56 @@
                 <div id="metricas-content" class="tab-content hidden">
                     <h2 class="text-xl font-semibold text-gray-900 mb-4">Métricas do Modelo</h2>
                     
-                    <div class="mb-6 bg-blue-50 p-4 rounded-lg">
-                        <h3 class="text-sm font-medium text-blue-800 mb-2">Sobre as Métricas</h3>
-                        <p class="text-xs text-blue-600">
-                            <strong>Período de validação:</strong> {{ periodo_validacao }} - Dados utilizados para validar a precisão do modelo.
-                        </p>
-                    </div>
+<div class="mb-6 bg-blue-50 p-5 rounded-lg border border-blue-200 shadow-sm">
+  <h3 class="text-base font-semibold text-blue-900 mb-3">Sobre as Métricas</h3>
+
+  <p class="text-xs text-blue-700 mb-3">
+    <strong>Período de validação:</strong> {{ periodo_validacao }}  
+    <br>
+    As métricas abaixo ajudam a avaliar a qualidade das previsões do modelo para a taxa de abandono escolar (%):
+  </p>
+
+  <ul class="list-disc list-inside space-y-2 text-xs text-blue-700 leading-relaxed">
+    <li>
+      <strong>MAE (Erro Absoluto Médio):</strong> mostra o erro médio em pontos percentuais entre os valores reais e previstos.  
+      Quanto menor, melhor. Um MAE abaixo de 1 indica que o modelo, em média, erra menos de 1 ponto percentual.
+    </li>
+    <li>
+      <strong>RMSE (Raiz do Erro Quadrático Médio):</strong> semelhante ao MAE, mas dá mais peso a erros grandes.  
+      Valores baixos significam que o modelo raramente comete grandes desvios.
+    </li>
+    <li>
+      <strong>Na prática:</strong> MAE e RMSE são bons para entender o erro em pontos percentuais (mais útil para tomada de decisão).
+    </li>
+  </ul>
+</div>
                     
                     {% if metricas %}
                     <div class="overflow-x-auto rounded-lg border border-gray-200">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="municipio" data-order="{% if sort_by == 'municipio' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="municipio" data-order="{% if request.GET.sort == 'municipio' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>Município</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'municipio' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'municipio' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'municipio' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'municipio' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="mae" data-order="{% if sort_by == 'mae' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="mae" data-order="{% if request.GET.sort == 'mae' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>MAE</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'mae' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'mae' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'mae' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'mae' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="rmse" data-order="{% if sort_by == 'rmse' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="rmse" data-order="{% if request.GET.sort == 'rmse' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>RMSE</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'rmse' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'rmse' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'rmse' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'rmse' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
@@ -301,27 +305,27 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="municipio" data-order="{% if sort_by == 'municipio' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="municipio" data-order="{% if request.GET.sort == 'municipio' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>Município</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'municipio' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'municipio' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'municipio' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'municipio' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="ano" data-order="{% if sort_by == 'ano' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="ano" data-order="{% if request.GET.sort == 'ano' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>Ano</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'ano' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'ano' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'ano' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'ano' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="total" data-order="{% if sort_by == 'total' %}{{ sort_order }}{% else %}asc{% endif %}">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer sortable" data-sort="total" data-order="{% if request.GET.sort == 'total' %}{% if request.GET.order == 'asc' %}desc{% else %}asc{% endif %}{% else %}asc{% endif %}">
                                         <div class="flex items-center">
                                             <span>Evasão (%)</span>
-                                            <svg class="w-4 h-4 ml-1 {% if sort_by != 'total' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if sort_by == 'total' and sort_order == 'asc' %}M19 9l-7 7-7-7{% else %}M5 15l7-7 7 7{% endif %}"></path>
+                                            <svg class="w-4 h-4 ml-1 {% if request.GET.sort != 'total' %}invisible{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if request.GET.sort == 'total' and request.GET.order == 'asc' %}M5 15l7-7 7 7{% else %}M19 9l-7 7-7-7{% endif %}"></path>
                                             </svg>
                                         </div>
                                     </th>
@@ -345,21 +349,32 @@
                     </div>
                     
                     <!-- Paginação para dados históricos -->
-                    {% if dados_brutos.paginator %}
+                    {% if dados_brutos.has_other_pages %}
                     <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
                         <div class="text-sm text-gray-700">
                             Mostrando <span class="font-medium">{{ dados_brutos.start_index }}</span> a <span class="font-medium">{{ dados_brutos.end_index }}</span> de <span class="font-medium">{{ dados_brutos.paginator.count }}</span> resultados
                         </div>
                         <div class="flex gap-1">
                             {% if dados_brutos.has_previous %}
-                                <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&order={{ sort_order }}&{% endif %}page={{ dados_brutos.previous_page_number }}"
+                                <a href="?{% if request.GET.municipio %}municipio={{ request.GET.municipio }}&{% endif %}{% if request.GET.ano %}ano={{ request.GET.ano }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&order={{ request.GET.order }}&{% endif %}page={{ dados_brutos.previous_page_number }}#historicos"
                                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
                                     Anterior
                                 </a>
                             {% endif %}
                             
+                            {% for i in dados_brutos.paginator.page_range %}
+                                {% if dados_brutos.number == i %}
+                                    <span class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm">{{ i }}</span>
+                                {% else %}
+                                    <a href="?{% if request.GET.municipio %}municipio={{ request.GET.municipio }}&{% endif %}{% if request.GET.ano %}ano={{ request.GET.ano }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&order={{ request.GET.order }}&{% endif %}page={{ i }}#historicos"
+                                       class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                                        {{ i }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                            
                             {% if dados_brutos.has_next %}
-                                <a href="?{% if municipio_filter %}municipio={{ municipio_filter }}&{% endif %}{% if ano_filter %}ano={{ ano_filter }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&order={{ sort_order }}&{% endif %}page={{ dados_brutos.next_page_number }}"
+                                <a href="?{% if request.GET.municipio %}municipio={{ request.GET.municipio }}&{% endif %}{% if request.GET.ano %}ano={{ request.GET.ano }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&order={{ request.GET.order }}&{% endif %}page={{ dados_brutos.next_page_number }}#historicos"
                                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
                                     Próxima
                                 </a>
@@ -384,6 +399,7 @@
                         </p>
                     </div>
                     
+                    {% if melhores_municipios and piores_municipios %}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white rounded-xl shadow-sm p-4">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -428,6 +444,7 @@
                     
                     <div class="bg-white rounded-xl shadow-sm p-4">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Ranking Completo</h3>
+                        {% if ranking_completo %}
                         <div class="overflow-x-auto rounded-lg border border-gray-200">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -467,7 +484,13 @@
                                 </tbody>
                             </table>
                         </div>
+                        {% else %}
+                        <p class="text-gray-600 py-4 text-center">Nenhum dado disponível para o ranking.</p>
+                        {% endif %}
                     </div>
+                    {% else %}
+                    <p class="text-gray-600 py-4 text-center">Nenhum dado disponível para o ranking.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -559,21 +582,26 @@
                 const currentOrder = header.dataset.order;
                 const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
                 
-                // Construir URL
-                let url = '?';
-                if ("{{ municipio_filter }}") url += `municipio={{ municipio_filter }}&`;
-                if ("{{ ano_filter }}") url += `ano={{ ano_filter }}&`;
-                url += `sort=${sortBy}&order=${newOrder}`;
+                // Obter parâmetros atuais da URL
+                const urlParams = new URLSearchParams(window.location.search);
                 
-                // Manter a página atual se existir
-                const currentPage = new URLSearchParams(window.location.search).get('page');
-                if (currentPage) url += `&page=${currentPage}`;
+                // Atualizar parâmetros de ordenação
+                urlParams.set('sort', sortBy);
+                urlParams.set('order', newOrder);
+                
+                // Manter outros parâmetros (municipio, ano, page)
+                if (!urlParams.has('municipio') && "{{ request.GET.municipio }}") {
+                    urlParams.set('municipio', "{{ request.GET.municipio }}");
+                }
+                if (!urlParams.has('ano') && "{{ request.GET.ano }}") {
+                    urlParams.set('ano', "{{ request.GET.ano }}");
+                }
                 
                 // Adicionar hash para a seção atual
                 const activeTab = document.querySelector('.tab-button.border-blue-500').dataset.tab;
-                url += `#${activeTab}`;
                 
-                window.location.href = url;
+                // Redirecionar
+                window.location.href = '?' + urlParams.toString() + '#' + activeTab;
             });
         });
     });

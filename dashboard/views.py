@@ -41,7 +41,7 @@ def custom_login(request):
 @login_required
 def dashboard(request: HttpRequest):
     # Número de itens por página
-    ITEMS_PER_PAGE = 20
+    ITEMS_PER_PAGE = 200000
 
     # Buscar dados reais do banco - ADICIONAR ORDER_BY!
     dados_brutos_query = DadosEvasao.objects.select_related('municipio').order_by('-ano', 'municipio__nome')
