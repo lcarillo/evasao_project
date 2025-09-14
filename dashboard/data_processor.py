@@ -98,21 +98,7 @@ def processar_dados_evasao():
                 'y': dados_municipio['Total']
             })
 
-            # Verificar se temos dados de 2024, se não, criar com base no último ano
-            ultimo_ano = dados_prophet['ds'].max().year
-            if ultimo_ano < 2024:
-                # Encontrar o valor do último ano disponível
-                ultimo_valor = dados_prophet[dados_prophet['ds'].dt.year == ultimo_ano]['y'].values[0]
-
-                # Adicionar 2024 com o valor do último ano (como estimativa conservadora)
-                dados_2024 = pd.DataFrame({
-                    'ds': [pd.to_datetime('2024-12-31')],
-                    'y': [ultimo_valor]
-                })
-                dados_prophet = pd.concat([dados_prophet, dados_2024], ignore_index=True)
-                print(f"⚠️  Dados de 2024 não encontrados. Usando valor de {ultimo_ano}: {ultimo_valor}%")
-
-            # Separar treino (até 2023) e validação (2024)
+            # Separar dados de treino (até 2023) e validação (2024 se existir)
             dados_treino = dados_prophet[dados_prophet['ds'] < '2024-01-01']
             dados_validacao = dados_prophet[dados_prophet['ds'] >= '2024-01-01']
 
@@ -120,9 +106,9 @@ def processar_dados_evasao():
                 print(f"❌ Dados insuficientes para treino: {len(dados_treino)} registros")
                 continue
 
-            print(f"🔧 Treino: {len(dados_treino)} anos, Validação: {len(dados_validacao)} anos")
+            print(f"🔧 Treino: {len(dados_treino)} anos (até 2023), Validação: {len(dados_validacao)} anos (2024)")
 
-            # Treinar modelo Prophet
+            # Treinar modelo Prophet com dados até 2023
             modelo = Prophet(
                 yearly_seasonality=True,
                 seasonality_mode='multiplicative',
@@ -132,10 +118,9 @@ def processar_dados_evasao():
 
             modelo.fit(dados_treino)
 
-            # Fazer previsão para 2025 e 2026 - CORREÇÃO AQUI
-            # Criar datas futuras manualmente para garantir 2025 e 2026
+            # Fazer previsão para 2024 (se necessário para métricas) e 2025-2026
             futuro = pd.DataFrame({
-                'ds': pd.to_datetime(['2025-12-31', '2026-12-31'])
+                'ds': pd.to_datetime(['2024-12-31', '2025-12-31', '2026-12-31'])
             })
 
             print(f"📅 Fazendo previsão para anos: {[d.year for d in futuro['ds']]}")
@@ -147,18 +132,15 @@ def processar_dados_evasao():
             for _, row in previsao.iterrows():
                 print(f"   {row['ds'].year}: {row['yhat']:.2f}% ({row['yhat_lower']:.2f}% - {row['yhat_upper']:.2f}%)")
 
-            # Calcular métricas usando 2024 como validação
+            # Calcular métricas apenas se houver dados reais de 2024
             metricas = None
             if not dados_validacao.empty:
-                # Fazer previsão para 2024 para validação
-                futuro_validacao = pd.DataFrame({
-                    'ds': pd.to_datetime(['2024-12-31'])
-                })
-                previsao_validacao = modelo.predict(futuro_validacao)
+                # Filtrar previsão para 2024
+                previsao_2024 = previsao[previsao['ds'].dt.year == 2024]
 
-                if not previsao_validacao.empty:
+                if not previsao_2024.empty:
                     y_true = dados_validacao['y'].values
-                    y_pred = previsao_validacao['yhat'].values
+                    y_pred = previsao_2024['yhat'].values
 
                     # Verificar se os valores são válidos para cálculo
                     if len(y_true) > 0 and len(y_pred) > 0 and not np.isnan(y_true).any() and not np.isnan(
@@ -166,17 +148,15 @@ def processar_dados_evasao():
                         try:
                             metricas = calcular_metricas(y_true, y_pred)
                             print(f"📈 Métricas para {nome_municipio}:")
-                            print(
-                                f"   MAE={metricas['mae']:.3f}% (Erro médio de {metricas['mae']:.3f} pontos percentuais)")
+                            print(f"   MAE={metricas['mae']:.3f}%")
                             print(f"   RMSE={metricas['rmse']:.3f}%")
                             print(f"   MAPE={metricas['mape']:.1f}%")
-
                         except Exception as e:
                             print(f"❌ Erro ao calcular métricas: {str(e)}")
                     else:
                         print(f"⚠️  Valores inválidos para cálculo de métricas")
             else:
-                print(f"⚠️  Sem dados de validação para cálculo de métricas")
+                print(f"⚠️  Sem dados de 2024 para cálculo de métricas")
 
             # Salvar dados históricos
             for _, row in dados_municipio.iterrows():
@@ -193,20 +173,21 @@ def processar_dados_evasao():
                     }
                 )
 
-            # Salvar previsões para 2025 e 2026
+            # Salvar previsões para 2025 e 2026 (e 2024 se necessário)
             for _, row in previsao.iterrows():
                 ano = row['ds'].year
-                PrevisaoEvasao.objects.update_or_create(
-                    municipio=municipio,
-                    ano=ano,
-                    defaults={
-                        'previsao': row['yhat'],
-                        'limite_inferior': row['yhat_lower'],
-                        'limite_superior': row['yhat_upper']
-                    }
-                )
+                if ano >= 2025:  # Salvar apenas previsões futuras
+                    PrevisaoEvasao.objects.update_or_create(
+                        municipio=municipio,
+                        ano=ano,
+                        defaults={
+                            'previsao': row['yhat'],
+                            'limite_inferior': row['yhat_lower'],
+                            'limite_superior': row['yhat_upper']
+                        }
+                    )
 
-            # Salvar métricas
+            # Salvar métricas apenas se calculadas
             if metricas:
                 MetricasModelo.objects.update_or_create(
                     municipio=municipio,
